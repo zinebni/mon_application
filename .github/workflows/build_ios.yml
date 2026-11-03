@@ -21,18 +21,23 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x' # Mets ta version de Flutter
+          flutter-version: '3.x' # Mets ta version de Flutter si besoin (ex: 3.19.0)
           channel: 'stable'
           cache: true
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS IPA (Unsigned/Debug)
-        run: flutter build ipa --debug --no-codesign
+      - name: Build iOS App (Debug Non-Signé)
+        run: flutter build ios --debug --no-codesign
 
-      - name: Upload IPA artifact
+      - name: Zip Runner.app for Sideloadly
+        run: |
+          cd build/ios/iphoneos
+          zip -r Runner.zip Runner.app
+
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-debug-app
-          path: build/ios/iphoneos/Runner.app
+          path: build/ios/iphoneos/Runner.zip
